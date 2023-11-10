@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BH.cpp">
+    <ClCompile Include="53819.algo2.main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

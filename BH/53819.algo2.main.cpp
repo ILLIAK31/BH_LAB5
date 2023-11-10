@@ -27,6 +27,7 @@ public:
 	int Size{ 0 }, MS{ 1 };
 	T* vec = new T[MS];
 	void Add(T value,Comporator<T> comporator);
+	T Delete_Max(Comporator<T> comporator);
 };
 
 template<class T>
@@ -67,7 +68,7 @@ void HP<T>::Add(T value, Comporator<T> comporator)
 			if (index <= 0)
 				break;
 			index2 = floor((index - 1) / 2);
-			if (comporator(this->vec[index2], this->vec[index]))
+			if (comporator(this->vec[index],this->vec[index2]))
 			{
 				T val = this->vec[index];
 				this->vec[index] = this->vec[index2];
@@ -78,6 +79,12 @@ void HP<T>::Add(T value, Comporator<T> comporator)
 				break;
 		} 
 	}
+}
+
+template<class T>
+T HP<T>::Delete_Max(Comporator<T> comporator)
+{
+	//
 }
 
 int main()
