@@ -84,7 +84,56 @@ void HP<T>::Add(T value, Comporator<T> comporator)
 template<class T>
 T HP<T>::Delete_Max(Comporator<T> comporator)
 {
-	//
+	if (this->Size == 0)
+		return NULL;
+	else if (this->Size == 1)
+	{
+		int MAX = this->vec[0];
+		this->vec[0] = NULL;
+		--this->Size;
+		return MAX;
+	}
+	else
+	{
+		this->vec[0] = this->vec[this->Size - 1];
+		this->vec[this->Size - 1] = NULL;
+		int index = 0 , MAX = this->vec[0];
+		while ((((2 * index) + 1) < this->Size) || (((2 * index) + 2) < this->Size))
+		{
+			if (((((2 * index) + 1) < this->Size) && (((2 * index) + 2) >= this->Size)) && (this->vec[index] < this->vec[(2 * index) + 1]))
+			{
+				T val = this->vec[index];
+				this->vec[index] = this->vec[(2 * index) + 1];
+				this->vec[(2 * index) + 1] = val;
+				index = (2 * index) + 1;
+			}
+			else if (((((2 * index) + 1) >= this->Size) && (((2 * index) + 2) < this->Size)) && (this->vec[index] < this->vec[(2 * index) + 2]))
+			{
+				T val = this->vec[index];
+				this->vec[index] = this->vec[(2 * index) + 2];
+				this->vec[(2 * index) + 2] = val;
+				index = (2 * index) + 2;
+			}
+			else if ((comporator(this->vec[(2 * index) + 1], this->vec[(2 * index) + 2]))&&(this->vec[index] < this->vec[(2 * index) + 1]))
+			{
+				T val = this->vec[index];
+				this->vec[index] = this->vec[(2 * index) + 1];
+				this->vec[(2 * index) + 1] = val;
+				index = (2 * index) + 1;
+			}
+			else if ((comporator(this->vec[(2 * index) + 2], this->vec[(2 * index) + 1])) && (this->vec[index] < this->vec[(2 * index) + 2]))
+			{
+				T val = this->vec[index];
+				this->vec[index] = this->vec[(2 * index) + 2];
+				this->vec[(2 * index) + 2] = val;
+				index = (2 * index) + 2;
+			}
+			else
+				break;
+		}
+		--this->Size;
+		return MAX;
+	}
 }
 
 int main()
