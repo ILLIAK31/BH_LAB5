@@ -2,6 +2,7 @@
 // ILLIA KARMAZIN
 // ki53819@zut.edu.pl
 #include <iostream>
+#include <string>
 
 template <class T>
 class Comporator
@@ -28,6 +29,8 @@ public:
 	T* vec = new T[MS];
 	void Add(T value,Comporator<T> comporator);
 	T Delete_Max(Comporator<T> comporator);
+	void Clear(Comporator<T> comporator);
+	void Print();
 };
 
 template<class T>
@@ -136,6 +139,19 @@ T HP<T>::Delete_Max(Comporator<T> comporator)
 	}
 }
 
+template<class T>
+void HP<T>::Clear(Comporator<T> comporator)
+{
+	while (this->Size)
+		this->Delete_Max(comporator);
+}
+
+template<class T>
+void HP<T>::Print()
+{
+	//
+}
+
 int main()
 {
 	HP<int>* hp = new HP<int>();
@@ -150,6 +166,8 @@ int main()
 	hp->Add(10, comporator);
 	for (int i = 0; i < hp->Size; ++i)
 		std::cout << hp->vec[i] << " ";
+	std::cout << std::endl;
+	hp->Print();
 	//
 	delete hp;
     return 0;
