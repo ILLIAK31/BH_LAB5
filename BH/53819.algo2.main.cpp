@@ -31,6 +31,8 @@ public:
 	T Delete_Max(Comporator<T> comporator);
 	void Clear(Comporator<T> comporator);
 	void Print();
+	void HP_Up(int index, Comporator<T> comporator);
+	void HP_Down(int index, Comporator<T> comporator);
 };
 
 template<class T>
@@ -65,22 +67,8 @@ void HP<T>::Add(T value, Comporator<T> comporator)
 	}
 	if (this->Size != 1)
 	{
-		int index = this->Size-1, index2;
-		while (true)
-		{
-			if (index <= 0)
-				break;
-			index2 = floor((index - 1) / 2);
-			if (comporator(this->vec[index],this->vec[index2]))
-			{
-				T val = this->vec[index];
-				this->vec[index] = this->vec[index2];
-				this->vec[index2] = val;
-				index = index2;
-			}
-			else
-				break;
-		} 
+		int index = this->Size-1;
+		this->HP_Up(index, comporator);
 	}
 }
 
@@ -100,40 +88,8 @@ T HP<T>::Delete_Max(Comporator<T> comporator)
 	{
 		this->vec[0] = this->vec[this->Size - 1];
 		this->vec[this->Size - 1] = NULL;
-		int index = 0 , MAX = this->vec[0];
-		while ((((2 * index) + 1) < this->Size) || (((2 * index) + 2) < this->Size))
-		{
-			if (((((2 * index) + 1) < this->Size) && (((2 * index) + 2) >= this->Size)) && (this->vec[index] < this->vec[(2 * index) + 1]))
-			{
-				T val = this->vec[index];
-				this->vec[index] = this->vec[(2 * index) + 1];
-				this->vec[(2 * index) + 1] = val;
-				index = (2 * index) + 1;
-			}
-			else if (((((2 * index) + 1) >= this->Size) && (((2 * index) + 2) < this->Size)) && (this->vec[index] < this->vec[(2 * index) + 2]))
-			{
-				T val = this->vec[index];
-				this->vec[index] = this->vec[(2 * index) + 2];
-				this->vec[(2 * index) + 2] = val;
-				index = (2 * index) + 2;
-			}
-			else if ((comporator(this->vec[(2 * index) + 1], this->vec[(2 * index) + 2]))&&(this->vec[index] < this->vec[(2 * index) + 1]))
-			{
-				T val = this->vec[index];
-				this->vec[index] = this->vec[(2 * index) + 1];
-				this->vec[(2 * index) + 1] = val;
-				index = (2 * index) + 1;
-			}
-			else if ((comporator(this->vec[(2 * index) + 2], this->vec[(2 * index) + 1])) && (this->vec[index] < this->vec[(2 * index) + 2]))
-			{
-				T val = this->vec[index];
-				this->vec[index] = this->vec[(2 * index) + 2];
-				this->vec[(2 * index) + 2] = val;
-				index = (2 * index) + 2;
-			}
-			else
-				break;
-		}
+		int MAX = this->vec[0];
+		this->HP_Down(0, comporator);
 		--this->Size;
 		return MAX;
 	}
@@ -169,19 +125,69 @@ void HP<T>::Print()
 	}
 }
 
+template<class T>
+void HP<T>::HP_Up(int index, Comporator<T> comporator)
+{
+	int index2;
+	while (true)
+	{
+		if (index <= 0)
+			break;
+		index2 = floor((index - 1) / 2);
+		if (comporator(this->vec[index], this->vec[index2]))
+		{
+			T val = this->vec[index];
+			this->vec[index] = this->vec[index2];
+			this->vec[index2] = val;
+			index = index2;
+		}
+		else
+			break;
+	}
+}
+
+template<class T>
+void HP<T>::HP_Down(int index, Comporator<T> comporator)
+{
+	while ((((2 * index) + 1) < this->Size) || (((2 * index) + 2) < this->Size))
+	{
+		if (((((2 * index) + 1) < this->Size) && (((2 * index) + 2) >= this->Size)) && (this->vec[index] < this->vec[(2 * index) + 1]))
+		{
+			T val = this->vec[index];
+			this->vec[index] = this->vec[(2 * index) + 1];
+			this->vec[(2 * index) + 1] = val;
+			index = (2 * index) + 1;
+		}
+		else if (((((2 * index) + 1) >= this->Size) && (((2 * index) + 2) < this->Size)) && (this->vec[index] < this->vec[(2 * index) + 2]))
+		{
+			T val = this->vec[index];
+			this->vec[index] = this->vec[(2 * index) + 2];
+			this->vec[(2 * index) + 2] = val;
+			index = (2 * index) + 2;
+		}
+		else if ((comporator(this->vec[(2 * index) + 1], this->vec[(2 * index) + 2])) && (this->vec[index] < this->vec[(2 * index) + 1]))
+		{
+			T val = this->vec[index];
+			this->vec[index] = this->vec[(2 * index) + 1];
+			this->vec[(2 * index) + 1] = val;
+			index = (2 * index) + 1;
+		}
+		else if ((comporator(this->vec[(2 * index) + 2], this->vec[(2 * index) + 1])) && (this->vec[index] < this->vec[(2 * index) + 2]))
+		{
+			T val = this->vec[index];
+			this->vec[index] = this->vec[(2 * index) + 2];
+			this->vec[(2 * index) + 2] = val;
+			index = (2 * index) + 2;
+		}
+		else
+			break;
+	}
+}
+
 int main()
 {
 	HP<int>* hp = new HP<int>();
 	Comporator<int> comporator;
-	//
-    hp->Add(100, comporator);
-	hp->Add(70, comporator);
-	hp->Add(50, comporator);
-	hp->Add(125, comporator);
-	hp->Add(45, comporator);
-	hp->Add(60, comporator);
-	hp->Add(10, comporator);
-	hp->Print();
 	//
 	delete hp;
     return 0;
