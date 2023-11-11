@@ -149,7 +149,24 @@ void HP<T>::Clear(Comporator<T> comporator)
 template<class T>
 void HP<T>::Print()
 {
-	//
+	std::cout << "\t| Binary Heap (Max) |\n\t| Size : " << this->Size << " |\n";
+	std::string parent, left, right;
+	for (int index = 0; index < this->Size; ++index)
+	{
+		if (index == 0)
+			parent = "NULL";
+		else
+			parent = std::to_string(int(floor((index - 1) / 2)));
+		if (((2 * index) + 1) < this->Size)
+			left = std::to_string((2 * index) + 1);
+		else
+			left = "NULL";
+		if (((2 * index) + 2) < this->Size)
+			right = std::to_string((2 * index) + 2);
+		else
+			right = "NULL";
+		std::cout << "| Index " << index << " | Parent : " << parent << " | Left : " << left << " | Right : " << right << " | Value : " << this->vec[index] << " |\n";
+	}
 }
 
 int main()
@@ -164,9 +181,6 @@ int main()
 	hp->Add(45, comporator);
 	hp->Add(60, comporator);
 	hp->Add(10, comporator);
-	for (int i = 0; i < hp->Size; ++i)
-		std::cout << hp->vec[i] << " ";
-	std::cout << std::endl;
 	hp->Print();
 	//
 	delete hp;
