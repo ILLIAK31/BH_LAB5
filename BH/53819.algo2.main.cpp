@@ -3,6 +3,7 @@
 // ki53819@zut.edu.pl
 #include <iostream>
 #include <string>
+#include <time.h>
 
 template <class T>
 class Comporator
@@ -86,9 +87,9 @@ T HP<T>::Delete_Max(Comporator<T> comporator)
 	}
 	else
 	{
+		int MAX = this->vec[0];
 		this->vec[0] = this->vec[this->Size - 1];
 		this->vec[this->Size - 1] = NULL;
-		int MAX = this->vec[0];
 		this->HP_Down(0, comporator);
 		--this->Size;
 		return MAX;
@@ -129,27 +130,26 @@ template<class T>
 void HP<T>::HP_Up(int index, Comporator<T> comporator)
 {
 	int index2;
-	while (true)
+	if (index <= 0)
+		return;
+	index2 = floor((index - 1) / 2);
+	if (comporator(this->vec[index], this->vec[index2]))
 	{
-		if (index <= 0)
-			break;
-		index2 = floor((index - 1) / 2);
-		if (comporator(this->vec[index], this->vec[index2]))
-		{
-			T val = this->vec[index];
-			this->vec[index] = this->vec[index2];
-			this->vec[index2] = val;
-			index = index2;
-		}
-		else
-			break;
+		T val = this->vec[index];
+		this->vec[index] = this->vec[index2];
+		this->vec[index2] = val;
+		index = index2;
 	}
+	else
+		return;
+	HP_Up(index,comporator);
+	return;
 }
 
 template<class T>
 void HP<T>::HP_Down(int index, Comporator<T> comporator)
 {
-	while ((((2 * index) + 1) < this->Size) || (((2 * index) + 2) < this->Size))
+	if ((((2 * index) + 1) < this->Size) || (((2 * index) + 2) < this->Size))
 	{
 		if (((((2 * index) + 1) < this->Size) && (((2 * index) + 2) >= this->Size)) && (this->vec[index] < this->vec[(2 * index) + 1]))
 		{
@@ -157,6 +157,7 @@ void HP<T>::HP_Down(int index, Comporator<T> comporator)
 			this->vec[index] = this->vec[(2 * index) + 1];
 			this->vec[(2 * index) + 1] = val;
 			index = (2 * index) + 1;
+			HP_Down(index, comporator);
 		}
 		else if (((((2 * index) + 1) >= this->Size) && (((2 * index) + 2) < this->Size)) && (this->vec[index] < this->vec[(2 * index) + 2]))
 		{
@@ -164,6 +165,7 @@ void HP<T>::HP_Down(int index, Comporator<T> comporator)
 			this->vec[index] = this->vec[(2 * index) + 2];
 			this->vec[(2 * index) + 2] = val;
 			index = (2 * index) + 2;
+			HP_Down(index, comporator);
 		}
 		else if ((comporator(this->vec[(2 * index) + 1], this->vec[(2 * index) + 2])) && (this->vec[index] < this->vec[(2 * index) + 1]))
 		{
@@ -171,6 +173,7 @@ void HP<T>::HP_Down(int index, Comporator<T> comporator)
 			this->vec[index] = this->vec[(2 * index) + 1];
 			this->vec[(2 * index) + 1] = val;
 			index = (2 * index) + 1;
+			HP_Down(index, comporator);
 		}
 		else if ((comporator(this->vec[(2 * index) + 2], this->vec[(2 * index) + 1])) && (this->vec[index] < this->vec[(2 * index) + 2]))
 		{
@@ -178,17 +181,52 @@ void HP<T>::HP_Down(int index, Comporator<T> comporator)
 			this->vec[index] = this->vec[(2 * index) + 2];
 			this->vec[(2 * index) + 2] = val;
 			index = (2 * index) + 2;
+			HP_Down(index, comporator);
 		}
 		else
-			break;
+			return;
 	}
+	else
+		return;
+	return;
 }
 
 int main()
 {
 	HP<int>* hp = new HP<int>();
 	Comporator<int> comporator;
-	//
+    clock_t timer1, timer2, timer3, timer4;
+	int value;
+	double avr{ 0 };
+	timer1 = clock();
+	for (int index = 0; index < 10000; ++index)
+	{
+		value = rand() % RAND_MAX;
+		timer3 = clock();
+		hp->Add(value, comporator);
+		timer4 = clock();
+		avr += (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+	}
+	timer2 = clock();
+	avr /= 10000;
+	avr *= 1000;
+	hp->Print();
+	std::cout << "| Full time : " << (timer2 - timer1) / (double)CLOCKS_PER_SEC << " s | Average per obj : " << avr << " ms |\n\n";
+	avr = 0;
+	timer1 = clock();
+	for (int index = 0; index < 1000; ++index)
+	{
+		timer3 = clock();
+		int value2 = hp->Delete_Max(comporator);
+		timer4 = clock();
+		std::cout << "| " << value2 << " |\n";
+		avr += (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+	}
+	timer2 = clock();
+	avr /= 1000;
+	avr *= 1000;
+	std::cout << "| Full time : " << (timer2 - timer1) / (double)CLOCKS_PER_SEC << " s | Average per obj : " << avr << " ms |\n";
+	hp->Clear(comporator);
 	delete hp;
     return 0;
 }
